@@ -17,7 +17,6 @@ angular.module('brushfire_videosPage')
   		$scope.videosLoading=true;
       //JWR=Json WebSocket Response
       io.socket.get('/video',function whenServerResponds(data,JWR){
-        console.log("executing socket get request...",JWR)
         $scope.videosLoading=false;
 
         if( JWR.statusCode>=400 ){
@@ -84,14 +83,15 @@ angular.module('brushfire_videosPage')
         
         });
 
-        io.socket.on('video',function whenAvideoIsCreatedUpdatedOrDestroyed(event){
-          //add thew new video to the DOM
-          $scope.videos.unshift({title:event.data.title,src:event.data.src});
-          //Apply the changes to the DOM
-          //(We have to do this since 'io.socket.get' is not an angular-specific magical promisy-thing)
-          $scope.$apply();
-        })
-
 	     }
+       
+       io.socket.on('video',function whenAvideoIsCreatedUpdatedOrDestroyed(event){
+        console.log("executing sockect...")
+        //add thew new video to the DOM
+        $scope.videos.unshift({title:event.data.title,src:event.data.src});
+        //Apply the changes to the DOM
+        //(We have to do this since 'io.socket.get' is not an angular-specific magical promisy-thing)
+        $scope.$apply();
+      })
      }
 ]);
