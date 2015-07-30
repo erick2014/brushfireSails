@@ -51,14 +51,22 @@ angular.module('brushfire_videosPage')
 
       	$scope.busySubmittingVideo=true;
 
-      	$timeout(function(){
-     
-      		$scope.videos.unshift(_newVideo);
-      		$scope.busySubmittingVideo=false;
-      		$scope.newVideoTitle="";
-      		$scope.newVideoSrc="";
-      		 		console.log($scope.videos)
-      	},750);
+        $http.post("/video",{
+          title:_newVideo.title,
+          src:_newVideo.src
+        })
+        .then(function onSuccess(sailsResponse){
+          $scope.videos.unshift(_newVideo);
+        })
+        .catch( function onError(sailsResponse){
+          console.log("An unexpected error occurred: "+sailsResponse.statusText);
+        })
+        .finally(function eitherWay(){
+          $scope.busySubmittingVideo=false;
+          $scope.newVideoTitle="";
+          $scope.newVideoSrc="";
+        })
       }
+
 	 }
 ]);

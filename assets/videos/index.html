@@ -52,13 +52,16 @@
       </section>
       <!-- LIST OF VIDEOS -->
       <section class="the-list-of-videos col-md-12">
+        
         <div class="loading" ng-if="videosLoading">Loading videos...</div>
-        <ul>
-          <li class="video" ng-repeat="video in videos" ng-if="!videosLoading">
-            <h2>{{video.title}}</h2>
-            <iframe width="640" height="390" ng-src="{{video.src}}" frameborder="0" allowfullscreen></iframe>
-          </li>
-        </ul>
+        
+        <div ng-if="!videosLoading && videos.length===0">There are no videos, please add one!</div>
+          <ul>
+            <li class="video" ng-repeat="video in videos" ng-if="!videosLoading">
+              <h2>{{video.title}}</h2>
+              <iframe width="640" height="390" ng-src="{{video.src}}" frameborder="0" allowfullscreen></iframe>
+            </li>
+          </ul>
       </section>
       <!-- END LIST OF VIDEOS -->
     </div>
