@@ -10,55 +10,55 @@ angular.module('brushfire_videosPage',[])
 
 angular.module('brushfire_videosPage')
 	
-	.controller('PageCtrl',['$scope','$timeout',function($scope,$timeout){
+	.controller('PageCtrl',['$scope','$http',
 
-		$scope.videosLoading=true;
+    function($scope,$http){
 
-		$timeout(function afterRetrievingVideos(){
-      var _videos=[{
-        title:'PSY-GANGNAM STYLE M/V',
-        src:'https://www.youtube.com/embed/9bzkp7q19f0'
-      },{
-        title:'Justin Bieber - Baby ft. Ludacris',
-        src:'https://www.youtube.com/embed/kffacxfA7G4'
-      },{
-        title:'Charlie bit my finger - again!',
-        src:'https://www.youtube.com/embed/_OB1gSz8sSM'
-      }]
+  		$scope.videosLoading=true;
 
-      $scope.videosLoading=false;
-      $scope.videos=_videos;
+      $http.get('/video')
+        .then(function onSuccess(sailsResponse){
+          console.log("sails res",sailsResponse);
+          $scope.videos=sailsResponse.data;
+        })
+  		  .catch( function onError(sailsResponse){
+          if(sailsResponse.status='404'){
+            return;
+          }
+          console.log("An unexpected error occurred: "+sailsResponse.statusText);
+        })
+        .finally(function eitherWay(){
+          $scope.videosLoading=false;
+        })
 
-    },750);
+      $scope.submitNewVideo=function(){
 
-    $scope.submitNewVideo=function(){
+      	if( $scope.busySubmittingVideo ){
+      		return;
+      	}
 
-    	if( $scope.busySubmittingVideo ){
-    		return;
-    	}
+      	var _newVideo={
+      		title:$scope.newVideoTitle,
+      		src:$scope.newVideoSrc
+      	};
 
-    	var _newVideo={
-    		title:$scope.newVideoTitle,
-    		src:$scope.newVideoSrc
-    	};
+      	var parser=document.createElement('a');
+      	
+      	parser.href=_newVideo.src;
+      	
+      	var youtubeID=parser.search.substring(parser.search.indexOf("=")+1,parser.search.length);
+      	_newVideo.src='https://www.youtube.com/embed/'+youtubeID;
 
-    	var parser=document.createElement('a');
-    	
-    	parser.href=_newVideo.src;
-    	
-    	var youtubeID=parser.search.substring(parser.search.indexOf("=")+1,parser.search.length);
-    	_newVideo.src='https://www.youtube.com/embed/'+youtubeID;
+      	$scope.busySubmittingVideo=true;
 
-    	$scope.busySubmittingVideo=true;
-
-    	$timeout(function(){
-   
-    		$scope.videos.unshift(_newVideo);
-    		$scope.busySubmittingVideo=false;
-    		$scope.newVideoTitle="";
-    		$scope.newVideoSrc="";
-    		 		console.log($scope.videos)
-    	},750);
-    }
-
-	}]);
+      	$timeout(function(){
+     
+      		$scope.videos.unshift(_newVideo);
+      		$scope.busySubmittingVideo=false;
+      		$scope.newVideoTitle="";
+      		$scope.newVideoSrc="";
+      		 		console.log($scope.videos)
+      	},750);
+      }
+	 }
+]);
