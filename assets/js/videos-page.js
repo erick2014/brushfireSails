@@ -64,6 +64,8 @@ angular.module('brushfire_videosPage')
 
       	$scope.busySubmittingVideo=true;
 
+        $scope.submitVideosError=false;
+
         io.socket.post('/video',{
           title:_newVideo.title,
           src:_newVideo.src
@@ -72,6 +74,7 @@ angular.module('brushfire_videosPage')
           $scope.videosLoading=false;
 
           if( JWR.statusCode>=400 ){
+            $scope.submitVideosError=true;
             console.log("something bad happened");
           }
 
@@ -84,7 +87,7 @@ angular.module('brushfire_videosPage')
         });
 
 	     }
-       
+
        io.socket.on('video',function whenAvideoIsCreatedUpdatedOrDestroyed(event){
         console.log("executing sockect...")
         //add thew new video to the DOM
