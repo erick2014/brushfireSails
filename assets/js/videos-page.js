@@ -29,21 +29,6 @@ angular.module('brushfire_videosPage')
 
       })
 
-      /*$http.get('/video')
-        .then(function onSuccess(sailsResponse){
-          console.log("sails res",sailsResponse);
-          $scope.videos=sailsResponse.data;
-        })
-  		  .catch( function onError(sailsResponse){
-          if(sailsResponse.status='404'){
-            return;
-          }
-          console.log("An unexpected error occurred: "+sailsResponse.statusText);
-        })
-        .finally(function eitherWay(){
-          $scope.videosLoading=false;
-        }) */
-
       $scope.submitNewVideo=function(){
 
       	if( $scope.busySubmittingVideo ){
