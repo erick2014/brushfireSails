@@ -11,7 +11,52 @@
 
 module.exports.bootstrap = function(cb) {
 
-  // It's very important to trigger this callback method when you are finished
-  // with the bootstrap!  (otherwise your server will never lift, since it's waiting on the bootstrap)
-  cb();
+	//use the video model to count how many videos are avialable
+	Video.count().exec(function(err,numVideos){
+		
+		if(err){
+			return cb(err);
+		}
+		
+		if( numVideos >0 ){
+			console.log('Number of video records :',numVideos);
+			return cb();
+		}
+
+		var Youtube=require("machinepack-youtube");
+		//list Youtube videos which match the specified search query
+		Youtube.searchVideos({
+			query:'grumpy cat',
+			apiKey:'AIzaSyDXO3uVugLUvrrziRkWk6PLRnYO4x5QBa0',
+			limit:15,
+		}).exec({
+			//An unexpected error ocurred
+			error:function(err){
+				return cb(err);
+			},
+			//ok
+			success:function(returnedVideos){
+				//parce the videos from youtube
+				_.each(returnedVideos,function(video){
+					video.src='https://www.youtube.com/embed/'+video.id;
+					delete video.description;
+					delete video.publishedAt;
+					delete video.id;
+					delete video.url;
+				})
+				//save the parsed videos into db
+				Video.create(returnedVideos).exec(function(err,videoRecordsCreated){
+					if(err){
+						return cb(err);
+					}
+					console.log(videoRecordsCreated)
+					return cb();
+				})
+
+			}
+		})
+
+		
+	})
+
 };
